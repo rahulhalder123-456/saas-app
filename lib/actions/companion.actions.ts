@@ -139,48 +139,60 @@ export const newCompanionPermissions = async () => {
 
 // Bookmarks
 export const addBookmark = async (companionId: string, path: string) => {
-    const { userId } = await auth();
-    if (!userId) return;
-    const supabase = createSupabaseClient();
-    const { data, error } = await supabase.from("bookmarks").insert({
-        companion_id: companionId,
-        user_id: userId,
-    });
-    if (error) {
-        throw new Error(error.message);
-    }
-    // Revalidate the path to force a re-render of the page
+  const { userId } = await auth();
+  if (!userId) return;
 
-    revalidatePath(path);
-    return data;
+  const supabase = createSupabaseClient();
+
+  // Check if bookmark already exists
+  const { data: existing, error: findError } = await supabase
+    .from("bookmarks")
+    .select("id")
+    .eq("companion_id", companionId)
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (findError) throw new Error(findError.message);
+  if (existing) return; // Do nothing if already bookmarked
+
+  const { data, error } = await supabase.from("bookmarks").insert({
+    companion_id: companionId,
+    user_id: userId,
+  });
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath(path);
+  return data;
 };
 
+
 export const removeBookmark = async (companionId: string, path: string) => {
-    const { userId } = await auth();
-    if (!userId) return;
-    const supabase = createSupabaseClient();
-    const { data, error } = await supabase
-        .from("bookmarks")
-        .delete()
-        .eq("companion_id", companionId)
-        .eq("user_id", userId);
-    if (error) {
-        throw new Error(error.message);
-    }
-    revalidatePath(path);
-    return data;
+  const { userId } = await auth();
+  if (!userId) return;
+  const supabase = createSupabaseClient();
+  const { data, error } = await supabase
+    .from("bookmarks")
+    .delete()
+    .eq("companion_id", companionId)
+    .eq("user_id", userId);
+  if (error) {
+    throw new Error(error.message);
+  }
+  revalidatePath(path);
+  return data;
 };
 
 // It's almost the same as getUserCompanions, but it's for the bookmarked companions
 export const getBookmarkedCompanions = async (userId: string) => {
-    const supabase = createSupabaseClient();
-    const { data, error } = await supabase
-        .from("bookmarks")
-        .select(`companions:companion_id (*)`) // Notice the (*) to get all the companion data
-        .eq("user_id", userId);
-    if (error) {
-        throw new Error(error.message);
-    }
-    // We don't need the bookmarks data, so we return only the companions
-    return data.map(({ companions }) => companions);
+  const supabase = createSupabaseClient();
+  const { data, error } = await supabase
+    .from("bookmarks")
+    .select(`companions:companion_id (*)`) // Notice the (*) to get all the companion data
+    .eq("user_id", userId);
+  if (error) {
+    throw new Error(error.message);
+  }
+  // We don't need the bookmarks data, so we return only the companions
+  return data.map(({ companions }) => companions);
 };
