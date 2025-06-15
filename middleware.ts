@@ -1,6 +1,8 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
-export default clerkMiddleware();
+export default clerkMiddleware({
+  authorizedParties: ['https://saas-app-lime.vercel.app'], 
+});
 
 export const config = {
   matcher: [
