@@ -1,9 +1,9 @@
 "use client";
-import { useState } from "react"; // Add this
-import { addBookmark, removeBookmark } from "@/lib/actions/companion.actions";
+import { removeBookmark, addBookmark } from "@/lib/actions/companion.actions";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react"; // ✅ import state
 
 interface CompanionCardProps {
   id: string;
@@ -12,7 +12,7 @@ interface CompanionCardProps {
   subject: string;
   duration: number;
   color: string;
-  bookmarked?: boolean;
+  bookmarked: boolean;
 }
 
 const CompanionCard = ({
@@ -22,21 +22,22 @@ const CompanionCard = ({
   subject,
   duration,
   color,
-  bookmarked: initiallyBookmarked,
+  bookmarked: initialBookmarked,
 }: CompanionCardProps) => {
   const pathname = usePathname();
-  const [bookmarked, setBookmarked] = useState(initiallyBookmarked);
+  const [bookmarked, setBookmarked] = useState(initialBookmarked); // ✅ use local state
 
   const handleBookmark = async () => {
     try {
       if (bookmarked) {
         await removeBookmark(id, pathname);
+        setBookmarked(false); // ✅ update local state
       } else {
         await addBookmark(id, pathname);
+        setBookmarked(true); // ✅ update local state
       }
-      setBookmarked(!bookmarked); // Toggle state
-    } catch (err) {
-      console.error("Bookmark error:", err);
+    } catch (error) {
+      console.error("Bookmark toggle failed:", error);
     }
   };
 
@@ -47,7 +48,9 @@ const CompanionCard = ({
         <button className="companion-bookmark" onClick={handleBookmark}>
           <Image
             src={
-              bookmarked ? "/icons/bookmark-filled.svg" : "/icons/bookmark.svg"
+              bookmarked
+                ? "/icons/bookmark-filled.svg"
+                : "/icons/bookmark.svg"
             }
             alt="bookmark"
             width={12.5}
