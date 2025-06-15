@@ -15,6 +15,30 @@ enum CallStatus {
     FINISHED = 'FINISHED',
 }
 
+// Fixed: Added proper interface
+interface CompanionComponentProps {
+    companionId: string;
+    subject: string;
+    topic: string;
+    name: string;
+    userName: string;
+    userImage: string;
+    style?: string;
+    voice?: string;
+}
+
+interface SavedMessage {
+    role: 'user' | 'assistant';
+    content: string;
+}
+
+interface Message {
+    type: string;
+    transcriptType?: string;
+    role: 'user' | 'assistant';
+    transcript: string;
+}
+
 const CompanionComponent = ({ companionId, subject, topic, name, userName, userImage, style, voice }: CompanionComponentProps) => {
     const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
     const [isSpeaking, setIsSpeaking] = useState(false);
@@ -68,7 +92,7 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
             vapi.off('speech-start', onSpeechStart);
             vapi.off('speech-end', onSpeechEnd);
         }
-    }, []);
+    }, [companionId]); // Fixed: Added dependency
 
     const toggleMicrophone = () => {
         const isMuted = vapi.isMuted();
@@ -102,7 +126,9 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
                         <div
                             className={
                                 cn(
-                                    'absolute transition-opacity duration-1000', callStatus === CallStatus.FINISHED || callStatus === CallStatus.INACTIVE ? 'opacity-1001' : 'opacity-0', callStatus === CallStatus.CONNECTING && 'opacity-100 animate-pulse'
+                                    'absolute transition-opacity duration-1000', 
+                                    callStatus === CallStatus.FINISHED || callStatus === CallStatus.INACTIVE ? 'opacity-100' : 'opacity-0', // Fixed: opacity-1001 -> opacity-100
+                                    callStatus === CallStatus.CONNECTING && 'opacity-100 animate-pulse'
                                 )
                             }>
                             <Image src={`/icons/${subject}.svg`} alt={subject} width={150} height={150} className="max-sm:w-fit" />
@@ -153,7 +179,7 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
                                     {
                                         name
                                             .split(' ')[0]
-                                            .replace('/[.,]/g, ','')
+                                            .replace(/[.,]/g, '') // Fixed: Regex syntax
                                     }: {message.content}
                                 </p>
                             )
@@ -171,4 +197,4 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
     )
 }
 
-export default CompanionComponent
+export default CompanionComponent;

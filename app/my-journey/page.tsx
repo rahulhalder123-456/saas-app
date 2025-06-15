@@ -1,3 +1,4 @@
+
 import {
   Accordion,
   AccordionContent,
@@ -12,7 +13,20 @@ import {
   getBookmarkedCompanions,
 } from "@/lib/actions/companion.actions";
 import Image from "next/image";
-import CompanionsList from "@/components/CompanionList";
+import CompanionList from "@/components/CompanionList"; // Fixed: Component name
+import { get } from "http";
+import { subjects } from "@/constants";
+import { getSubjectColor } from "@/lib/utils";
+
+// Fixed: Added proper interface
+interface Companion {
+  id: string;
+  name: string;
+  topic: string;
+  subject: string;
+  duration: number;
+  bookmarked?: boolean;
+}
 
 const Profile = async () => {
   const user = await currentUser();
@@ -31,18 +45,38 @@ const Profile = async () => {
   // Add `bookmarked: true/false` to each companion/session item
   const enrichedCompanions = companions.map((companion) => ({
     ...companion,
+    duration: String(companion.duration),
     bookmarked: bookmarkedIds.has(companion.id),
   }));
-  
+
   const enrichedSessions = sessionHistory.map((session) => ({
     ...session,
+    duration: String(session.duration),
     bookmarked: bookmarkedIds.has(session.id),
   }));
-  
-  const enrichedBookmarks = bookmarkedCompanions.map((bookmark) => ({
-    ...bookmark,
-    bookmarked: true,
-  }));
+
+  // Remove duplicates by id for each list to avoid duplicate keys
+  const uniqueEnrichedCompanions = uniqueById(enrichedCompanions);
+  const uniqueEnrichedSessions = uniqueById(enrichedSessions);
+
+  // Helper to filter unique items by id
+  function uniqueById<T extends { id: string }>(arr: T[]): T[] {
+    const seen = new Set<string>();
+    return arr.filter((item) => {
+      if (seen.has(item.id)) return false;
+      seen.add(item.id);
+      return true;
+    });
+  }
+
+  // Remove duplicates from bookmarks (in case they overlap with companions or sessions)
+  const enrichedBookmarks = uniqueById(
+    bookmarkedCompanions.map((bookmark) => ({
+      ...bookmark,
+      duration: String(bookmark.duration),
+      bookmarked: true,
+    }))
+  );
 
   return (
     <main className="min-lg:w-3/4">
@@ -78,7 +112,12 @@ const Profile = async () => {
           </div>
           <div className="border border-black rounded-lg p-3 gap-2 flex flex-col h-fit">
             <div className="flex gap-2 items-center">
-              <Image src="/icons/cap.svg" alt="cap" width={22} height={22} />
+              <Image
+                src="/icons/cap.svg"
+                alt="cap"
+                width={22}
+                height={22}
+              />
               <p className="text-2xl font-bold">{companions.length}</p>
             </div>
             <div>Companions created</div>
@@ -92,7 +131,7 @@ const Profile = async () => {
             Bookmarked Companions {`(${enrichedBookmarks.length})`}
           </AccordionTrigger>
           <AccordionContent>
-            <CompanionsList
+            <CompanionList // Fixed: Component name
               companions={enrichedBookmarks}
               title="Bookmarked Companions"
             />
@@ -101,24 +140,24 @@ const Profile = async () => {
 
         <AccordionItem value="recent">
           <AccordionTrigger className="text-2xl font-bold">
-            Recent Sessions
+            Recent Sessions {`(${uniqueEnrichedSessions.length})`}
           </AccordionTrigger>
           <AccordionContent>
-            <CompanionsList
+            <CompanionList
               title="Recent Sessions"
-              companions={enrichedSessions}
+              companions={uniqueEnrichedSessions}
             />
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="companions">
           <AccordionTrigger className="text-2xl font-bold">
-            My Companions {`(${enrichedCompanions.length})`}
+            My Companions {`(${uniqueEnrichedCompanions.length})`}
           </AccordionTrigger>
           <AccordionContent>
-            <CompanionsList
+            <CompanionList
               title="My Companions"
-              companions={enrichedCompanions}
+              companions={uniqueEnrichedCompanions}
             />
           </AccordionContent>
         </AccordionItem>

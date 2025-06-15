@@ -1,56 +1,50 @@
 "use client";
-
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { cn, getSubjectColor } from "@/lib/utils";
+import React, { useState } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { addBookmark, removeBookmark } from "@/lib/actions/companion.actions";
+import { cn } from "@/lib/utils"; // Adjust the path as needed
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"; // Adjust the path as needed
+import { addBookmark, removeBookmark } from "@/lib/actions/companion.actions"; // Adjust the path as needed
+import { getSubjectColor } from "@/lib/utils"; // Adjust the path as needed
 
-interface Companion {
+// Define the types
+type Companion = {
   id: string;
   subject: string;
   name: string;
   topic: string;
-  duration: number;
-  bookmarked?: boolean; // ✅ added to reflect bookmark state
-}
+  duration: string;
+  bookmarked: boolean;
+};
 
-interface CompanionsListProps {
+type CompanionListProps = {
   title: string;
   companions?: Companion[];
   classNames?: string;
-}
+};
 
-const CompanionsList = ({ title, companions = [], classNames }: CompanionsListProps) => {
+const CompanionList: React.FC<CompanionListProps> = ({ title, companions = [], classNames }) => {
   const pathname = usePathname();
-  const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(
-    new Set(companions.filter(c => c.bookmarked).map(c => c.id))
-  );
+  const [companionList, setCompanionList] = useState<Companion[]>(companions);
 
   const toggleBookmark = async (id: string) => {
     try {
-      const isBookmarked = bookmarkedIds.has(id);
-      if (isBookmarked) {
+      const companion = companionList.find((c) => c.id === id);
+      if (!companion) return;
+
+      if (companion.bookmarked) {
         await removeBookmark(id, pathname);
-        setBookmarkedIds(prev => {
-          const updated = new Set(prev);
-          updated.delete(id);
-          return updated;
-        });
       } else {
         await addBookmark(id, pathname);
-        setBookmarkedIds(prev => new Set(prev).add(id));
       }
+
+      // Update local state for instant feedback
+      setCompanionList((prev) =>
+        prev.map((c) =>
+          c.id === id ? { ...c, bookmarked: !c.bookmarked } : c
+        )
+      );
     } catch (err) {
       console.error("Failed to toggle bookmark:", err);
     }
@@ -59,7 +53,6 @@ const CompanionsList = ({ title, companions = [], classNames }: CompanionsListPr
   return (
     <article className={cn("companion-list", classNames)}>
       <h2 className="font-bold text-3xl">{title}</h2>
-
       <Table>
         <TableHeader>
           <TableRow>
@@ -69,7 +62,7 @@ const CompanionsList = ({ title, companions = [], classNames }: CompanionsListPr
           </TableRow>
         </TableHeader>
         <TableBody>
-          {companions.map(({ id, subject, name, topic, duration }) => (
+          {companionList.map(({ id, subject, name, topic, duration, bookmarked }) => (
             <TableRow key={id}>
               <TableCell>
                 <div className="flex items-center gap-2 justify-between">
@@ -93,7 +86,7 @@ const CompanionsList = ({ title, companions = [], classNames }: CompanionsListPr
                   <button onClick={() => toggleBookmark(id)} className="ml-2">
                     <Image
                       src={
-                        bookmarkedIds.has(id)
+                        bookmarked
                           ? "/icons/bookmark-filled.svg"
                           : "/icons/bookmark.svg"
                       }
@@ -104,31 +97,9 @@ const CompanionsList = ({ title, companions = [], classNames }: CompanionsListPr
                   </button>
                 </div>
               </TableCell>
-
-              <TableCell>
-                <div className="subject-badge w-fit max-md:hidden">{subject}</div>
-                <div
-                  className="flex items-center justify-center rounded-lg w-fit p-2 md:hidden"
-                  style={{ backgroundColor: getSubjectColor(subject) }}
-                >
-                  <Image src={`/icons/${subject}.svg`} alt={subject} width={18} height={18} />
-                </div>
-              </TableCell>
-
-              <TableCell>
-                <div className="flex items-center gap-2 w-full justify-end">
-                  <p className="text-2xl">
-                    {duration} <span className="max-md:hidden">mins</span>
-                  </p>
-                  <Image
-                    src="/icons/clock.svg"
-                    alt="minutes"
-                    width={14}
-                    height={14}
-                    className="md:hidden"
-                  />
-                </div>
-              </TableCell>
+              {/* Add more TableCell components here for subject and duration if needed */}
+              <TableCell>{subject}</TableCell>
+              <TableCell className="text-right">{duration}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -137,4 +108,4 @@ const CompanionsList = ({ title, companions = [], classNames }: CompanionsListPr
   );
 };
 
-export default CompanionsList;
+export default CompanionList;

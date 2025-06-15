@@ -1,9 +1,16 @@
-
 import {getAllCompanions} from "@/lib/actions/companion.actions";
 import CompanionCard from "@/components/CompanionCard";
 import {getSubjectColor} from "@/lib/utils";
 import SearchInput from "@/components/SearchInput";
 import SubjectFilter from "@/components/SubjectFilter";
+
+// Fixed: Added proper type definition
+interface SearchParams {
+    searchParams: Promise<{
+        subject?: string;
+        topic?: string;
+    }>;
+}
 
 const CompanionsLibrary = async ({ searchParams }: SearchParams) => {
     const filters = await searchParams;
@@ -27,6 +34,7 @@ const CompanionsLibrary = async ({ searchParams }: SearchParams) => {
                         key={companion.id}
                         {...companion}
                         color={getSubjectColor(companion.subject)}
+                        bookmarked={false} /* Fixed: Added required prop */
                     />
                 ))}
             </section>

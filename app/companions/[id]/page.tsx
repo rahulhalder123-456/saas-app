@@ -16,11 +16,10 @@ const CompanionSession = async ({params}: CompanionSessionPageProps) => {
     const companion = await getCompanion(id);
     const user = await currentUser()
 
-    const {name, subject, title, topic, duration} = companion;
-
     if (!user) redirect('/sign-in');
     if (!companion) redirect('/companions');
 
+    const {name, subject, title, topic, duration} = companion;
 
     return (
         <main>
@@ -31,7 +30,7 @@ const CompanionSession = async ({params}: CompanionSessionPageProps) => {
                     </div>
 
                     <div className={"flex flex-col gap-2"}>
-                        <div className={'flex items-center gap]'}>
+                        <div className={'flex items-center gap-2'}> {/* Fixed: gap] -> gap-2 */}
                             <p className={"font-bold text-2xl"}>{companion.name}</p>
                             <div className={"subject-badge max-sm:hidden"}>
                                 {companion.subject}
