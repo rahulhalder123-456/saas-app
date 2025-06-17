@@ -36,12 +36,17 @@ const CompanionCard = ({
     <article className="companion-card" style={{ backgroundColor: color }}>
       <div className="flex justify-between items-center">
         <div className="subject-badge">{subject}</div>
-        <button className="companion-bookmark" onClick={handleBookmark}>
+        <button
+          className="companion-bookmark"
+          onClick={handleBookmark}
+          title={bookmarked ? "Remove bookmark" : "Add bookmark"}
+          aria-label={bookmarked ? "Remove bookmark" : "Add bookmark"}
+        >
           <Image
             src={
               bookmarked ? "/icons/bookmark-filled.svg" : "/icons/bookmark.svg"
             }
-            alt="bookmark"
+            alt={bookmarked ? "Bookmarked" : "Not bookmarked"}
             width={12.5}
             height={15}
           />

@@ -84,14 +84,16 @@ const CompanionCard = ({ id, name, topic, subject, duration, color, bookmarked }
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                         className: "companion-bookmark",
                         onClick: handleBookmark,
+                        title: bookmarked ? "Remove bookmark" : "Add bookmark",
+                        "aria-label": bookmarked ? "Remove bookmark" : "Add bookmark",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                             src: bookmarked ? "/icons/bookmark-filled.svg" : "/icons/bookmark.svg",
-                            alt: "bookmark",
+                            alt: bookmarked ? "Bookmarked" : "Not bookmarked",
                             width: 12.5,
                             height: 15
                         }, void 0, false, {
                             fileName: "[project]/components/CompanionCard.tsx",
-                            lineNumber: 40,
+                            lineNumber: 45,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
@@ -110,7 +112,7 @@ const CompanionCard = ({ id, name, topic, subject, duration, color, bookmarked }
                 children: name
             }, void 0, false, {
                 fileName: "[project]/components/CompanionCard.tsx",
-                lineNumber: 51,
+                lineNumber: 56,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -118,7 +120,7 @@ const CompanionCard = ({ id, name, topic, subject, duration, color, bookmarked }
                 children: topic
             }, void 0, false, {
                 fileName: "[project]/components/CompanionCard.tsx",
-                lineNumber: 52,
+                lineNumber: 57,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -131,7 +133,7 @@ const CompanionCard = ({ id, name, topic, subject, duration, color, bookmarked }
                         height: 13.5
                     }, void 0, false, {
                         fileName: "[project]/components/CompanionCard.tsx",
-                        lineNumber: 54,
+                        lineNumber: 59,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -142,13 +144,13 @@ const CompanionCard = ({ id, name, topic, subject, duration, color, bookmarked }
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/CompanionCard.tsx",
-                        lineNumber: 60,
+                        lineNumber: 65,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/CompanionCard.tsx",
-                lineNumber: 53,
+                lineNumber: 58,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -159,12 +161,12 @@ const CompanionCard = ({ id, name, topic, subject, duration, color, bookmarked }
                     children: "Launch Lesson"
                 }, void 0, false, {
                     fileName: "[project]/components/CompanionCard.tsx",
-                    lineNumber: 64,
+                    lineNumber: 69,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/CompanionCard.tsx",
-                lineNumber: 63,
+                lineNumber: 68,
                 columnNumber: 7
             }, this)
         ]
